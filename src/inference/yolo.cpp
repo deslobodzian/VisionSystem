@@ -1,5 +1,6 @@
 #include "inference/yolo.hpp"
 #include "NvOnnxParser.h"
+#include <array>
 
 using namespace nvinfer1;
 
@@ -247,6 +248,9 @@ std::vector<BBoxInfo> Yolo::run(sl::Mat left_img, int orig_image_h, int orig_ima
 
     CUDA_CHECK(cudaMemcpyAsync(h_output_, d_output_, batch_size_ * output_size_ * sizeof (float), cudaMemcpyDeviceToHost, stream_));
     cudaStreamSynchronize(stream_);
+
+    // int size_h_out = std::end(&h_output_) - std::begin(&h_output_);
+    // info("h_output_ has "+ std::to_string(size_h_out) + " elements");
     end = std::chrono::high_resolution_clock::now();
     elapsed = end - start;
     debug("Inference took: " + std::to_string(elapsed.count()));
